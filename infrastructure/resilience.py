@@ -25,7 +25,7 @@ class CustomCircuitBreaker:
         self.name = name
         self._breaker = pybreaker.CircuitBreaker(
             fail_max=fail_max,
-            timeout_reset=timeout
+            reset_timeout=timeout
         )
 
     @property

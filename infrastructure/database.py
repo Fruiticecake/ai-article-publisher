@@ -1,5 +1,6 @@
 """数据库连接管理"""
 from contextlib import asynccontextmanager
+from datetime import datetime
 from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
@@ -26,7 +27,7 @@ class ProjectRecord(Base):
     language: Mapped[str] = mapped_column(String(100))
     topics: Mapped[dict] = mapped_column(JSON)
     readme: Mapped[str] = mapped_column(String, nullable=True)
-    metadata: Mapped[dict] = mapped_column(JSON, nullable=True)
+    repo_metadata: Mapped[dict] = mapped_column("metadata", JSON, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime)
     updated_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     rank: Mapped[int] = mapped_column(Integer)
@@ -44,6 +45,20 @@ class ReportRecord(Base):
     published_at: Mapped[dict] = mapped_column(JSON, nullable=True)
     insights: Mapped[list] = mapped_column(JSON, nullable=True)
     quality_score: Mapped[float] = mapped_column(Float)
+
+
+class UserRecord(Base):
+    """用户数据库记录"""
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    username: Mapped[str] = mapped_column(String(100), unique=True, index=True)
+    password: Mapped[str] = mapped_column(String(200))
+    email: Mapped[str] = mapped_column(String(200), nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
 
 
 class DatabaseManager:

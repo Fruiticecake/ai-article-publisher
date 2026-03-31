@@ -77,6 +77,7 @@ class AuthService:
                 email=email,
                 is_active=True,
                 is_admin=True,  # 默认为管理员
+                created_at=datetime.now(),
             )
             session.add(user)
             await session.flush()

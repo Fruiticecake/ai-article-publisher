@@ -1,5 +1,6 @@
 """增强版 Web Dashboard - FastAPI"""
 import logging
+from pathlib import Path
 from typing import Any
 from datetime import datetime
 
@@ -7,6 +8,7 @@ from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from sqlalchemy import select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -94,6 +96,20 @@ class EnhancedDashboardAPI:
             allow_methods=["*"],
             allow_headers=["*"],
         )
+
+        # 挂载静态文件 (在路由设置之前挂载)
+        # 使用绝对路径避免路径问题
+        base_path = Path(r"D:\products\auto-publisher")
+        frontend_path = base_path / "frontend" / "dist"
+        if frontend_path.exists():
+            print(f"Mounting frontend from: {frontend_path}")
+            app.mount("/dashboard", StaticFiles(directory=str(frontend_path), html=True), name="dashboard")
+        else:
+            # 如果前端未构建，挂载源目录（仅用于开发）
+            dev_path = base_path / "frontend"
+            if dev_path.exists():
+                print(f"Mounting frontend from dev: {dev_path}")
+                app.mount("/dashboard", StaticFiles(directory=str(dev_path), html=True), name="dashboard")
 
         # 设置路由
         self._setup_routes(app)
@@ -341,7 +357,9 @@ class EnhancedDashboardAPI:
             "insights": report.insights,
         }
 
-    def run(self, host: str = "0.0.0.0", port: int = 8080) -> None:
+    async def run(self, host: str = "0.0.0.0", port: int = 8080) -> None:
         """运行服务器"""
         import uvicorn
-        uvicorn.run(self.app, host=host, port=port)
+        config = uvicorn.Config(self.app, host=host, port=port, log_level="info")
+        server = uvicorn.Server(config)
+        await server.serve()

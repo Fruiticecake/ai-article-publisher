@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import pybreaker; import inspect; print\\(inspect.signature\\(pybreaker.CircuitBreaker.__init__\\)\\)\")",
+      "Bash(python -c \"import pybreaker; b = pybreaker.CircuitBreaker\\(\\); print\\(dir\\(b\\)\\)\")",
+      "Read(//d/products/**)",
+      "Bash(cd d:*)",
+      "Bash(curl -s http://localhost:8080/)",
+      "Bash(curl -s http://localhost:8080/health)",
+      "Bash(netstat -ano)",
+      "Bash(findstr :8080)",
+      "Bash(curl -v http://localhost:8080/health)",
+      "Bash(curl -s http://localhost:8080/dashboard/)",
+      "Bash(npm --version)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(taskkill /F /FI \"IMAGENAME eq python.exe\")",
+      "Bash(python -c \"from pathlib import Path; import sys; p = Path\\(r''d:/products/auto-publisher/application/dashboard_enhanced.py''\\); print\\(''file:'', p\\); print\\(''parent:'', p.parent\\); print\\(''parent.parent:'', p.parent.parent\\); print\\(''frontend path:'', p.parent.parent / ''frontend'' / ''dist''\\)\")",
+      "Bash(tasklist)",
+      "Read(//c/Users/Administrator/AppData/Local/Temp/claude/d--products-auto-publisher/5865291c-3088-4247-98b1-97f8682bc7be/tasks/**)",
+      "Bash(python -c \"from pathlib import Path; p = Path\\(r''d:/products/auto-publisher/application/dashboard_enhanced.py''\\); print\\(''parent.parent:'', p.parent.parent\\); print\\(''frontend dist exists:'', \\(p.parent.parent / ''frontend'' / ''dist''\\).exists\\(\\)\\); print\\(''full path:'', \\(p.parent.parent / ''frontend'' / ''dist''\\)\\)\")",
+      "Bash(curl -s http://localhost:8080/dashboard/index.html)",
+      "Bash(python -c \":*)"
+    ]
+  }
+}

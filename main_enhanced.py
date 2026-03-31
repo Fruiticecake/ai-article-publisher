@@ -189,7 +189,7 @@ async def run_dashboard() -> None:
         version="2.0.0",
     )
     dashboard = EnhancedDashboardAPI(db_manager, dashboard_config)
-    dashboard.run(port=SETTINGS.monitoring.dashboard_port)
+    await dashboard.run(port=SETTINGS.monitoring.dashboard_port)
 
 
 def main() -> None:
