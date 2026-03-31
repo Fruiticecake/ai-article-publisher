@@ -70,6 +70,14 @@ class TemplateConfig:
 
 
 @dataclass
+class AuthConfig:
+    """认证配置"""
+    secret_key: str = os.getenv("JWT_SECRET_KEY", "auto-publisher-secret-key-change-in-production")
+    algorithm: str = "HS256"
+    token_expires_days: int = int(os.getenv("JWT_TOKEN_EXPIRES_DAYS", "7"))
+
+
+@dataclass
 class Settings:
     """主配置"""
     # 子配置
@@ -80,6 +88,7 @@ class Settings:
     monitoring: MonitoringConfig = field(default_factory=MonitoringConfig)
     schedule: ScheduleConfig = field(default_factory=ScheduleConfig)
     template: TemplateConfig = field(default_factory=TemplateConfig)
+    auth: AuthConfig = field(default_factory=AuthConfig)
 
     # 路径配置
     reports_dir: Path = Path(os.getenv("REPORTS_DIR", "reports"))
