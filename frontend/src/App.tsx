@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard';
 import Projects from './pages/Projects';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
+import Publish from './pages/Publish';
 import Login from './pages/Login';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         <Route path="/projects" element={<Projects />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/publish" element={<Publish />} />
       </Route>
     </Routes>
   );

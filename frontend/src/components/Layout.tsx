@@ -7,6 +7,7 @@ import {
   LogOut,
   User,
   Sparkles,
+  Send,
 } from 'lucide-react';
 
 export default function Layout() {
@@ -16,6 +17,7 @@ export default function Layout() {
     { path: '/', label: '仪表盘', icon: LayoutDashboard },
     { path: '/projects', label: '项目', icon: FolderOpen },
     { path: '/reports', label: '报告', icon: FileText },
+    { path: '/publish', label: '发布', icon: Send },
     { path: '/settings', label: '设置', icon: Settings },
   ];
 

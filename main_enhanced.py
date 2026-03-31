@@ -26,6 +26,7 @@ from adapters.publishers import (
     TelegramPublisher,
     ZhihuPublisher,
     JuejinPublisher,
+    XHSPublisher,
 )
 
 
@@ -67,6 +68,7 @@ def create_publishers() -> MultiPublisher:
         TelegramPublisher(SETTINGS.publisher.telegram_bot_token, SETTINGS.publisher.telegram_chat_id),
         ZhihuPublisher(SETTINGS.publisher.zhihu_token),
         JuejinPublisher(SETTINGS.publisher.juejin_token),
+        XHSPublisher(SETTINGS.publisher.xhs_cookie),
     ]
 
     enabled_publishers = [p for p in publishers if p.enabled]

@@ -1,10 +1,11 @@
 import axios from 'axios';
+import type { PublisherPlatform, ExportFormat } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  timeout: 30000,
 });
 
 apiClient.interceptors.request.use((config) => {
@@ -28,7 +29,7 @@ apiClient.interceptors.response.use(
 
 export const api = {
   // Projects
-  getProjects: (params?: { limit?: number; offset?: number }) =>
+  getProjects: (params?: { limit?: number; offset?: number; keyword?: string; language?: string; min_stars?: number }) =>
     apiClient.get('/projects', { params }).then((res) => res.data),
 
   getProject: (id: number) =>
@@ -51,4 +52,43 @@ export const api = {
 
   logout: () =>
     apiClient.post('/auth/logout').then((res) => res.data),
+
+  // Publishers
+  getPublishers: () =>
+    apiClient.get('/publishers').then((res) => res.data),
+
+  publishReport: (reportId: number, platforms: PublisherPlatform[]) =>
+    apiClient.post(`/publish/${reportId}`, null, { params: { platforms } }).then((res) => res.data),
+
+  // Schedule
+  getSchedule: () =>
+    apiClient.get('/schedule').then((res) => res.data),
+
+  updateSchedule: (config: { cron: string; timezone: string; platforms?: PublisherPlatform[]; enabled: boolean }) =>
+    apiClient.post('/schedule', null, { params: config }).then((res) => res.data),
+
+  triggerNow: (platforms?: PublisherPlatform[]) =>
+    apiClient.post('/schedule/trigger', null, { params: { platforms } }).then((res) => res.data),
+
+  // Document Export
+  exportDocument: (projectId: number, format: ExportFormat) =>
+    apiClient.get('/documents/export', { params: { project_id: projectId, format }, responseType: 'blob' as const }),
+
+  exportMarkdown: (reportId: number) =>
+    apiClient.get(`/documents/export/markdown/${reportId}`, { responseType: 'blob' as const }),
+
+  exportPdf: (reportId: number) =>
+    apiClient.get(`/documents/export/pdf/${reportId}`, { responseType: 'blob' as const }),
+};
+
+// 导出工具函数
+export const downloadBlob = (blob: Blob, filename: string) => {
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
 };

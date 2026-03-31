@@ -31,3 +31,53 @@ export interface Stats {
   total_projects: number;
   total_reports: number;
 }
+
+// 发布平台相关类型
+export type PublisherPlatform = 'notion' | 'csdn' | 'zhihu' | 'juejin' | 'telegram' | 'xhs';
+
+export interface PublisherInfo {
+  name: string;
+  type: PublisherPlatform;
+  enabled: boolean;
+  description: string;
+}
+
+export interface PublishResult {
+  success: boolean;
+  result: string;
+  timestamp: string;
+}
+
+export interface PublishResponse {
+  success: boolean;
+  report_id: number;
+  platforms: Record<PublisherPlatform, PublishResult>;
+}
+
+// 定时任务相关类型
+export interface ScheduleConfig {
+  enabled: boolean;
+  cron: string;
+  timezone: string;
+  platforms: PublisherPlatform[];
+}
+
+export interface ScheduleResponse {
+  success: boolean;
+  config: ScheduleConfig;
+}
+
+export interface TriggerResponse {
+  success: boolean;
+  message: string;
+  platforms: PublisherPlatform[];
+  timestamp: string;
+}
+
+// 文档导出相关类型
+export type ExportFormat = 'pdf' | 'markdown';
+
+export interface ExportRequest {
+  project_id: number;
+  format: ExportFormat;
+}

@@ -20,6 +20,7 @@ class PublisherType(Enum):
     ZHIHU = "zhihu"
     JUEJIN = "juejin"
     TELEGRAM = "telegram"
+    XHS = "xhs"  # 小红书
 
 
 @dataclass

@@ -45,6 +45,7 @@ class PublisherConfig:
     juejin_token: str = os.getenv("JUEJIN_TOKEN", "")
     telegram_bot_token: str = os.getenv("TELEGRAM_BOT_TOKEN", "")
     telegram_chat_id: str = os.getenv("TELEGRAM_CHAT_ID", "")
+    xhs_cookie: str = os.getenv("XHS_COOKIE", "")  # 小红书 Cookie
 
 
 @dataclass
