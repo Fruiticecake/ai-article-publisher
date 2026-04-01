@@ -28,8 +28,8 @@ class ProjectRecord(Base):
     topics: Mapped[dict] = mapped_column(JSON)
     readme: Mapped[str] = mapped_column(String, nullable=True)
     repo_metadata: Mapped[dict] = mapped_column("metadata", JSON, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=True)
     rank: Mapped[int] = mapped_column(Integer)
 
 
@@ -41,7 +41,7 @@ class ReportRecord(Base):
     title: Mapped[str] = mapped_column(String(500))
     project_id: Mapped[int] = mapped_column(Integer, nullable=True, index=True)
     content_markdown: Mapped[str] = mapped_column(String)
-    generated_at: Mapped[datetime] = mapped_column(DateTime)
+    generated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     published_at: Mapped[dict] = mapped_column(JSON, nullable=True)
     insights: Mapped[list] = mapped_column(JSON, nullable=True)
     quality_score: Mapped[float] = mapped_column(Float)

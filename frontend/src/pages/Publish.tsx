@@ -31,35 +31,36 @@ export default function Publish() {
 
   const loadData = async () => {
     setLoading(true);
-    try {
-      const [scheduleData, publishersData, projectsData] = await Promise.all([
-        api.getSchedule().catch(() => null),
-        api.getPublishers(),
-        api.getProjects({ limit: 20 }),
-      ]);
+    setError(null);
 
-      if (scheduleData) {
-        setScheduleConfig(scheduleData);
-        setCron(scheduleData.cron);
-        setTimezone(scheduleData.timezone);
-        setEnabled(scheduleData.enabled);
-        setSelectedPlatforms(scheduleData.platforms || []);
-      }
+    // 每个请求单独处理错误，不要让一个失败导致全部失败
+    const scheduleData = await api.getSchedule().catch(() => {
+      setError('需要登录才能访问配置，请先登录');
+      return null;
+    });
+    const publishersData = await api.getPublishers().catch(() => []);
+    const projectsData = await api.getProjects({ limit: 20 }).catch(() => []);
 
-      setPublishers(publishersData);
-      setProjects(projectsData);
-
-      // 默认选择所有启用的平台
-      const enabledPlatforms = publishersData
-        .filter((p: PublisherInfo) => p.enabled)
-        .map((p: PublisherInfo) => p.type);
-      setSelectedPlatforms(enabledPlatforms);
-    } catch (err) {
-      setError('加载数据失败');
-      console.error(err);
-    } finally {
-      setLoading(false);
+    if (scheduleData) {
+      setScheduleConfig(scheduleData);
+      setCron(scheduleData.cron);
+      setTimezone(scheduleData.timezone);
+      setEnabled(scheduleData.enabled);
+      setSelectedPlatforms(scheduleData.platforms || []);
     }
+
+    setPublishers(publishersData);
+    setProjects(projectsData);
+
+    // 默认选择所有启用的平台
+    const enabledPlatforms = publishersData
+      .filter((p: PublisherInfo) => p.enabled)
+      .map((p: PublisherInfo) => p.type);
+    if (selectedPlatforms.length === 0) {
+      setSelectedPlatforms(enabledPlatforms);
+    }
+
+    setLoading(false);
   };
 
   const handleSaveSchedule = async () => {

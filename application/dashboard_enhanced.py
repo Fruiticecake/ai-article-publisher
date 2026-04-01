@@ -286,7 +286,7 @@ class EnhancedDashboardAPI:
         @app.get("/api/reports/{report_id}", tags=["报告"])
         async def get_report(report_id: int):
             """获取单个报告"""
-            async with self.db.db_manager.session() as session:
+            async with self.db_manager.session() as session:
                 stmt = select(ReportRecord).where(ReportRecord.id == report_id)
                 result = await session.execute(stmt)
                 report = result.scalar_one_or_none()
@@ -300,12 +300,14 @@ class EnhancedDashboardAPI:
             """获取统计信息"""
             async with self.db_manager.session() as session:
                 # 项目统计
-                project_count_stmt = select(ProjectRecord).count()
-                project_count = (await session.execute(project_count_stmt)).scalar()
+                project_count_stmt = select(ProjectRecord)
+                project_count_result = await session.execute(project_count_stmt)
+                project_count = len(project_count_result.scalars().all())
 
                 # 报告统计
-                report_count_stmt = select(ReportRecord).count()
-                report_count = (await session.execute(report_count_stmt)).scalar()
+                report_count_stmt = select(ReportRecord)
+                report_count_result = await session.execute(report_count_stmt)
+                report_count = len(report_count_result.scalars().all())
 
                 return {
                     "total_projects": project_count,
@@ -710,6 +712,221 @@ class EnhancedDashboardAPI:
             </body>
             </html>
             """
+
+        # 系统配置相关路由
+        @app.get("/api/config/publishers", tags=["配置"])
+        async def get_publisher_config(
+            credentials: HTTPAuthorizationCredentials = Depends(security),
+        ):
+            """获取发布平台配置"""
+            user = await self.auth_service.get_current_user(credentials.credentials)
+            if not user or not user.get("is_admin"):
+                raise HTTPException(status_code=403, detail="需要管理员权限")
+
+            return {
+                "notion_token": SETTINGS.publisher.notion_token,
+                "notion_database_id": SETTINGS.publisher.notion_database_id,
+                "csdn_api": SETTINGS.publisher.csdn_api,
+                "csdn_token": SETTINGS.publisher.csdn_token,
+                "zhihu_token": SETTINGS.publisher.zhihu_token,
+                "juejin_token": SETTINGS.publisher.juejin_token,
+                "telegram_bot_token": SETTINGS.publisher.telegram_bot_token,
+                "telegram_chat_id": SETTINGS.publisher.telegram_chat_id,
+                "xhs_cookie": SETTINGS.publisher.xhs_cookie,
+            }
+
+        @app.post("/api/config/publishers", tags=["配置"])
+        async def update_publisher_config(
+            notion_token: str = None,
+            notion_database_id: str = None,
+            csdn_api: str = None,
+            csdn_token: str = None,
+            zhihu_token: str = None,
+            juejin_token: str = None,
+            telegram_bot_token: str = None,
+            telegram_chat_id: str = None,
+            xhs_cookie: str = None,
+            credentials: HTTPAuthorizationCredentials = Depends(security),
+        ):
+            """更新发布平台配置"""
+            user = await self.auth_service.get_current_user(credentials.credentials)
+            if not user or not user.get("is_admin"):
+                raise HTTPException(status_code=403, detail="需要管理员权限")
+
+            try:
+                # 读取现有 .env 文件
+                env_path = Path(".env")
+                env_content = {}
+                if env_path.exists():
+                    with open(env_path, "r", encoding="utf-8") as f:
+                        for line in f:
+                            line = line.strip()
+                            if line and not line.startswith("#") and "=" in line:
+                                key, value = line.split("=", 1)
+                                env_content[key.strip()] = value.strip()
+
+                # 更新字段
+                if notion_token is not None:
+                    env_content["NOTION_TOKEN"] = notion_token
+                    SETTINGS.publisher.notion_token = notion_token
+                if notion_database_id is not None:
+                    env_content["NOTION_DATABASE_ID"] = notion_database_id
+                    SETTINGS.publisher.notion_database_id = notion_database_id
+                if csdn_api is not None:
+                    env_content["CSDN_PUBLISH_API"] = csdn_api
+                    SETTINGS.publisher.csdn_api = csdn_api
+                if csdn_token is not None:
+                    env_content["CSDN_TOKEN"] = csdn_token
+                    SETTINGS.publisher.csdn_token = csdn_token
+                if zhihu_token is not None:
+                    env_content["ZHIHU_TOKEN"] = zhihu_token
+                    SETTINGS.publisher.zhihu_token = zhihu_token
+                if juejin_token is not None:
+                    env_content["JUEJIN_TOKEN"] = juejin_token
+                    SETTINGS.publisher.juejin_token = juejin_token
+                if telegram_bot_token is not None:
+                    env_content["TELEGRAM_BOT_TOKEN"] = telegram_bot_token
+                    SETTINGS.publisher.telegram_bot_token = telegram_bot_token
+                if telegram_chat_id is not None:
+                    env_content["TELEGRAM_CHAT_ID"] = telegram_chat_id
+                    SETTINGS.publisher.telegram_chat_id = telegram_chat_id
+                if xhs_cookie is not None:
+                    env_content["XHS_COOKIE"] = xhs_cookie
+                    SETTINGS.publisher.xhs_cookie = xhs_cookie
+
+                # 写回 .env 文件
+                with open(env_path, "w", encoding="utf-8") as f:
+                    for key, value in env_content.items():
+                        f.write(f"{key}={value}\n")
+
+                return {
+                    "success": True,
+                    "message": "配置已保存，部分配置可能需要重启服务器后生效",
+                }
+            except Exception as e:
+                logger.error(f"保存配置失败: {e}")
+                raise HTTPException(status_code=500, detail=f"保存配置失败: {str(e)}")
+
+        @app.get("/api/config/llm", tags=["配置"])
+        async def get_llm_config(
+            credentials: HTTPAuthorizationCredentials = Depends(security),
+        ):
+            """获取 LLM 配置"""
+            user = await self.auth_service.get_current_user(credentials.credentials)
+            if not user or not user.get("is_admin"):
+                raise HTTPException(status_code=403, detail="需要管理员权限")
+
+            return {
+                "api_key": SETTINGS.llm.api_key,
+                "model": SETTINGS.llm.model,
+                "enabled": SETTINGS.llm.enabled,
+            }
+
+        @app.post("/api/config/llm", tags=["配置"])
+        async def update_llm_config(
+            api_key: str = None,
+            model: str = None,
+            enabled: bool = None,
+            credentials: HTTPAuthorizationCredentials = Depends(security),
+        ):
+            """更新 LLM 配置"""
+            user = await self.auth_service.get_current_user(credentials.credentials)
+            if not user or not user.get("is_admin"):
+                raise HTTPException(status_code=403, detail="需要管理员权限")
+
+            try:
+                env_path = Path(".env")
+                env_content = {}
+                if env_path.exists():
+                    with open(env_path, "r", encoding="utf-8") as f:
+                        for line in f:
+                            line = line.strip()
+                            if line and not line.startswith("#") and "=" in line:
+                                key, value = line.split("=", 1)
+                                env_content[key.strip()] = value.strip()
+
+                if api_key is not None:
+                    env_content["LLM_API_KEY"] = api_key
+                    SETTINGS.llm.api_key = api_key
+                if model is not None:
+                    env_content["LLM_MODEL"] = model
+                    SETTINGS.llm.model = model
+                if enabled is not None:
+                    env_content["LLM_ENABLED"] = str(enabled).lower()
+                    SETTINGS.llm.enabled = enabled
+
+                with open(env_path, "w", encoding="utf-8") as f:
+                    for key, value in env_content.items():
+                        f.write(f"{key}={value}\n")
+
+                return {
+                    "success": True,
+                    "message": "LLM 配置已保存",
+                }
+            except Exception as e:
+                logger.error(f"保存 LLM 配置失败: {e}")
+                raise HTTPException(status_code=500, detail=f"保存配置失败: {str(e)}")
+
+        # GitHub 配置
+        @app.get("/api/config/github", tags=["配置"])
+        async def get_github_config(
+            credentials: HTTPAuthorizationCredentials = Depends(security),
+        ):
+            """获取 GitHub 配置"""
+            user = await self.auth_service.get_current_user(credentials.credentials)
+            if not user or not user.get("is_admin"):
+                raise HTTPException(status_code=403, detail="需要管理员权限")
+
+            return {
+                "token": SETTINGS.github.token,
+                "fetch_count": SETTINGS.github.fetch_count,
+                "days_window": SETTINGS.github.days_window,
+            }
+
+        @app.post("/api/config/github", tags=["配置"])
+        async def update_github_config(
+            token: str = None,
+            fetch_count: int = None,
+            days_window: int = None,
+            credentials: HTTPAuthorizationCredentials = Depends(security),
+        ):
+            """更新 GitHub 配置"""
+            user = await self.auth_service.get_current_user(credentials.credentials)
+            if not user or not user.get("is_admin"):
+                raise HTTPException(status_code=403, detail="需要管理员权限")
+
+            try:
+                env_path = Path(".env")
+                env_content = {}
+                if env_path.exists():
+                    with open(env_path, "r", encoding="utf-8") as f:
+                        for line in f:
+                            line = line.strip()
+                            if line and not line.startswith("#") and "=" in line:
+                                key, value = line.split("=", 1)
+                                env_content[key.strip()] = value.strip()
+
+                if token is not None:
+                    env_content["GITHUB_TOKEN"] = token
+                    SETTINGS.github.token = token
+                if fetch_count is not None:
+                    env_content["GITHUB_FETCH_COUNT"] = str(fetch_count)
+                    SETTINGS.github.fetch_count = fetch_count
+                if days_window is not None:
+                    env_content["GITHUB_DAYS_WINDOW"] = str(days_window)
+                    SETTINGS.github.days_window = days_window
+
+                with open(env_path, "w", encoding="utf-8") as f:
+                    for key, value in env_content.items():
+                        f.write(f"{key}={value}\n")
+
+                return {
+                    "success": True,
+                    "message": "GitHub 配置已保存",
+                }
+            except Exception as e:
+                logger.error(f"保存 GitHub 配置失败: {e}")
+                raise HTTPException(status_code=500, detail=f"保存配置失败: {str(e)}")
 
         # 健康检查
         @app.get("/health", tags=["系统"])

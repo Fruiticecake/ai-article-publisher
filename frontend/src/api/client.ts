@@ -79,6 +79,27 @@ export const api = {
 
   exportPdf: (reportId: number) =>
     apiClient.get(`/documents/export/pdf/${reportId}`, { responseType: 'blob' as const }),
+
+  // Configuration - Publishers
+  getPublisherConfig: () =>
+    apiClient.get('/config/publishers').then((res) => res.data),
+
+  updatePublisherConfig: (config: Record<string, string>) =>
+    apiClient.post('/config/publishers', null, { params: config }).then((res) => res.data),
+
+  // Configuration - LLM
+  getLlmConfig: () =>
+    apiClient.get('/config/llm').then((res) => res.data),
+
+  updateLlmConfig: (config: { api_key?: string; model?: string; enabled?: boolean }) =>
+    apiClient.post('/config/llm', null, { params: config }).then((res) => res.data),
+
+  // Configuration - GitHub
+  getGithubConfig: () =>
+    apiClient.get('/config/github').then((res) => res.data),
+
+  updateGithubConfig: (config: { token?: string; fetch_count?: number; days_window?: number }) =>
+    apiClient.post('/config/github', null, { params: config }).then((res) => res.data),
 };
 
 // 导出工具函数

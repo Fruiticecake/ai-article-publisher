@@ -81,3 +81,33 @@ export interface ExportRequest {
   project_id: number;
   format: ExportFormat;
 }
+
+// 配置相关类型
+export interface PublisherConfig {
+  notion_token: string;
+  notion_database_id: string;
+  csdn_api: string;
+  csdn_token: string;
+  zhihu_token: string;
+  juejin_token: string;
+  telegram_bot_token: string;
+  telegram_chat_id: string;
+  xhs_cookie: string;
+}
+
+export interface LlmConfig {
+  api_key: string;
+  model: string;
+  enabled: boolean;
+}
+
+export interface GithubConfig {
+  token: string;
+  fetch_count: number;
+  days_window: number;
+}
+
+export interface ConfigSaveResponse {
+  success: boolean;
+  message: string;
+}
