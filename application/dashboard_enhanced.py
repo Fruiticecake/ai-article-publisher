@@ -22,6 +22,7 @@ from application.auth import AuthService
 from application.project_manager import ProjectManager
 from application.notifications import NotificationService
 from application.document_generator import DocumentGenerator
+from application.auto_publisher_service import AutoPublisherService
 from adapters.publishers import (
     MultiPublisher, PublishPayload,
     NotionPublisher, CsdnPublisher, TelegramPublisher,
@@ -88,6 +89,7 @@ class EnhancedDashboardAPI:
         self.auth_service = AuthService(db_manager)
         self.project_manager = ProjectManager(db_manager)
         self.notification_service = NotificationService()
+        self.auto_publisher_service = AutoPublisherService(db_manager)
         self.app = self._create_app()
 
     def _create_app(self) -> FastAPI:
@@ -111,6 +113,11 @@ class EnhancedDashboardAPI:
         # 使用绝对路径避免路径问题
         base_path = Path(r"D:\products\auto-publisher")
         frontend_path = base_path / "frontend" / "dist"
+        
+        # 配置 MIME 类型，修复 JavaScript 文件被识别为 JSON 的问题
+        import mimetypes
+        mimetypes.add_type('application/javascript', '.js')
+        
         if frontend_path.exists():
             print(f"Mounting frontend from: {frontend_path}")
             app.mount("/dashboard", StaticFiles(directory=str(frontend_path), html=True), name="dashboard")
@@ -615,79 +622,77 @@ class EnhancedDashboardAPI:
 
         # ===== 定时发布配置相关路由 =====
         @app.get("/api/schedule", tags=["定时任务"])
-        async def get_schedule(
+        def get_schedule(
             credentials: HTTPAuthorizationCredentials = Depends(security),
         ):
             """获取定时发布配置"""
-            user = await self.auth_service.get_current_user(credentials.credentials)
-            if not user:
-                raise HTTPException(status_code=401, detail="需要登录")
-            
-            # 从配置读取
-            return {
-                "enabled": True,
-                "cron": SETTINGS.schedule.cron,
-                "timezone": SETTINGS.schedule.timezone,
-                "platforms": ["notion", "csdn", "zhihu", "juejin", "telegram", "xhs"],
-            }
+            # 从 auto_publisher_service 获取配置
+            config = self.auto_publisher_service.get_schedule_config()
+            config["enabled_publishers"] = self.auto_publisher_service.get_enabled_publishers()
+            return config
 
         @app.post("/api/schedule", tags=["定时任务"])
         async def update_schedule(
-            cron: str,
-            timezone: str = "Asia/Shanghai",
-            platforms: list[str] | None = None,
-            enabled: bool = True,
+            cron: str = None,
+            timezone: str = None,
+            platforms: list[str] = None,
+            enabled: bool = None,
             credentials: HTTPAuthorizationCredentials = Depends(security),
         ):
             """更新定时发布配置"""
             user = await self.auth_service.get_current_user(credentials.credentials)
             if not user or not user.get("is_admin"):
                 raise HTTPException(status_code=403, detail="需要管理员权限")
-            
+
             # 验证 cron 格式
-            fields = cron.split()
-            if len(fields) != 5:
-                raise HTTPException(status_code=400, detail="无效的 cron 表达式")
-            
-            # 保存配置到文件（生产环境应该存数据库）
-            schedule_config = {
-                "cron": cron,
-                "timezone": timezone,
-                "platforms": platforms or ["notion"],
-                "enabled": enabled,
-            }
-            
-            config_path = Path("state/schedule_config.json")
-            config_path.parent.mkdir(parents=True, exist_ok=True)
-            config_path.write_text(json.dumps(schedule_config, ensure_ascii=False, indent=2), encoding="utf-8")
-            
-            return {
-                "success": True,
-                "config": schedule_config,
-            }
+            if cron:
+                fields = cron.split()
+                if len(fields) != 5:
+                    raise HTTPException(status_code=400, detail="无效的 cron 表达式")
+
+            result = self.auto_publisher_service.update_schedule_config(
+                cron=cron,
+                timezone=timezone,
+                platforms=platforms,
+                enabled=enabled,
+            )
+
+            return result
 
         @app.post("/api/schedule/trigger", tags=["定时任务"])
         async def trigger_now(
-            platforms: list[str] | None = None,
+            platforms: list[str] = None,
+            count: int = 1,
             credentials: HTTPAuthorizationCredentials = Depends(security),
         ):
             """立即触发一次发布任务"""
             user = await self.auth_service.get_current_user(credentials.credentials)
             if not user or not user.get("is_admin"):
                 raise HTTPException(status_code=403, detail="需要管理员权限")
-            
+
             # 记录手动触发日志
-            logger.info(f"手动触发发布任务，平台: {platforms}")
-            
-            # 这里可以调用实际的执行逻辑
-            # 实际实现中应该调用 DailyTaskExecutor
-            
-            return {
-                "success": True,
-                "message": "任务已触发",
-                "platforms": platforms or ["notion", "csdn", "zhihu", "juejin", "telegram", "xhs"],
-                "timestamp": datetime.now().isoformat(),
-            }
+            logger.info(f"手动触发发布任务，平台: {platforms}, 数量: {count}")
+
+            # 调用自动发布服务
+            result = await self.auto_publisher_service.publish_latest_reports(
+                count=count,
+                platforms=platforms,
+            )
+
+            return result
+
+        @app.post("/api/publish/unpublished", tags=["发布平台"])
+        async def publish_all_unpublished(
+            platforms: list[str] = None,
+            credentials: HTTPAuthorizationCredentials = Depends(security),
+        ):
+            """发布所有未发布的报告"""
+            user = await self.auth_service.get_current_user(credentials.credentials)
+            if not user:
+                raise HTTPException(status_code=401, detail="需要登录")
+
+            result = await self.auto_publisher_service.publish_all_unpublished(platforms=platforms)
+            return result
 
         # 主页
         @app.get("/", response_class=HTMLResponse)

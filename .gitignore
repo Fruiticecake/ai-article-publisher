@@ -46,6 +46,9 @@ Thumbs.db
 *.db
 *.sqlite
 
+# State files
+state/
+
 # Node
 node_modules/
 npm-debug.log*

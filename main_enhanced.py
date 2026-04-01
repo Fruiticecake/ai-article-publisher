@@ -18,6 +18,7 @@ from application.auth import AuthService
 from application.project_manager import ProjectManager
 from application.notifications import NotificationService
 from application.task_queue import TaskQueue, TaskWorker
+from application.auto_publisher_service import AutoPublisherService
 from adapters.github_adapter import GitHubAdapter
 from adapters.publishers import (
     MultiPublisher,
@@ -185,12 +186,20 @@ async def run_dashboard() -> None:
 
     db_manager = await initialize_database()
 
+    # 初始化自动发布服务
+    from application.auto_publisher_service import AutoPublisherService
+    auto_publisher = AutoPublisherService(db_manager)
+
     dashboard_config = DashboardConfig(
         title="Auto Publisher Dashboard",
         description="GitHub 项目分析与发布平台",
         version="2.0.0",
     )
     dashboard = EnhancedDashboardAPI(db_manager, dashboard_config)
+
+    # 启动自动发布调度器
+    auto_publisher.start_scheduler()
+
     await dashboard.run(port=SETTINGS.monitoring.dashboard_port)
 
 

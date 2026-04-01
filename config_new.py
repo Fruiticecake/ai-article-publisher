@@ -45,7 +45,7 @@ class PublisherConfig:
     juejin_token: str = os.getenv("JUEJIN_TOKEN", "")
     telegram_bot_token: str = os.getenv("TELEGRAM_BOT_TOKEN", "")
     telegram_chat_id: str = os.getenv("TELEGRAM_CHAT_ID", "")
-    xhs_cookie: str = os.getenv("XHS_COOKIE", "")  # 小红书 Cookie
+    xhs_cookie: str = os.getenv("XHS_COOKIE", "")
 
 
 @dataclass
@@ -53,7 +53,7 @@ class MonitoringConfig:
     """监控配置"""
     enabled: bool = bool(os.getenv("MONITORING_ENABLED", "true").lower() == "true")
     metrics_port: int = int(os.getenv("METRICS_PORT", "8000"))
-    dashboard_port: int = int(os.getenv("DASHBOARD_PORT", "8080"))
+    dashboard_port: int = int(os.getenv("DASHBOARD_PORT", "8081"))
 
 
 @dataclass
@@ -81,7 +81,6 @@ class AuthConfig:
 @dataclass
 class Settings:
     """主配置"""
-    # 子配置
     database: DatabaseConfig = field(default_factory=DatabaseConfig)
     github: GitHubConfig = field(default_factory=GitHubConfig)
     llm: LLMConfig = field(default_factory=LLMConfig)
@@ -91,11 +90,9 @@ class Settings:
     template: TemplateConfig = field(default_factory=TemplateConfig)
     auth: AuthConfig = field(default_factory=AuthConfig)
 
-    # 路径配置
     reports_dir: Path = Path(os.getenv("REPORTS_DIR", "reports"))
     state_file: Path = Path(os.getenv("STATE_FILE", "state/selection_state.json"))
 
-    # 其他
     log_level: str = os.getenv("LOG_LEVEL", "INFO")
     debug: bool = bool(os.getenv("DEBUG", "false").lower() == "true")
 
