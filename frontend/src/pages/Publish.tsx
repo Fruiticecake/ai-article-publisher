@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
@@ -250,7 +252,7 @@ export default function Publish() {
           <Button
             onClick={handleTriggerNow}
             disabled={triggering || selectedPlatforms.length === 0}
-            variant="primary"
+            variant="default"
             className="w-full"
           >
             {triggering ? '执行中...' : '立即发布'}

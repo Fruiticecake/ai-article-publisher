@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';

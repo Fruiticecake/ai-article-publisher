@@ -1,3 +1,5 @@
+'use client';
+
 import { useProjects } from '@/hooks/useProjects';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
