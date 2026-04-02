@@ -23,28 +23,45 @@ class CustomCircuitBreaker:
         self.fail_max = fail_max
         self.timeout = timeout
         self.name = name
-        self._breaker = pybreaker.CircuitBreaker(
-            fail_max=fail_max,
-            reset_timeout=timeout
-        )
+        self._failure_count = 0
+        self._opened = False
 
     @property
     def state(self) -> str:
-        return self._breaker.current_state
+        return "open" if self._opened else "closed"
 
     def call(self, func: Callable[..., T], *args, **kwargs) -> T:
         try:
-            return self._breaker.call(func, *args, **kwargs)
+            if self._opened:
+                raise pybreaker.CircuitBreakerError()
+            result = func(*args, **kwargs)
+            self._failure_count = 0
+            return result
+        except Exception as e:
+            self._failure_count += 1
+            if self._failure_count >= self.fail_max:
+                self._opened = True
+            raise e
         except pybreaker.CircuitBreakerError:
             logger.warning(f"熔断器 {self.name} 已开启，拒绝调用")
             raise
 
     async def acall(self, func: Callable[..., T], *args, **kwargs) -> T:
+        """异步调用，支持 asyncio"""
         try:
-            return await self._breaker.call_async(func, *args, **kwargs)
-        except pybreaker.CircuitBreakerError:
-            logger.warning(f"熔断器 {self.name} 已开启，拒绝调用")
-            raise
+            if self._opened:
+                raise pybreaker.CircuitBreakerError()
+
+            result = await func(*args, **kwargs)
+            self._failure_count = 0
+            return result
+        except Exception as e:
+            self._failure_count += 1
+            if self._failure_count >= self.fail_max:
+                self._opened = True
+            if isinstance(e, pybreaker.CircuitBreakerError):
+                logger.warning(f"熔断器 {self.name} 已开启，拒绝调用")
+            raise e
 
 
 class RetryPolicy:
