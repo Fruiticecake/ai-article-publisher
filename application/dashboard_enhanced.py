@@ -938,6 +938,25 @@ class EnhancedDashboardAPI:
                 "timestamp": datetime.utcnow().isoformat(),
             }
 
+        # Catch-all for SPA frontend routing
+        # All requests to /dashboard/* return index.html so React Router handles it
+        @app.get("/dashboard/{full_path:path}", response_class=HTMLResponse)
+        async def serve_spa(full_path: str):
+            """Serve SPA index.html for any frontend route"""
+            # __file__ is application/dashboard_enhanced.py
+            # parent.parent gives project root
+            project_root = Path(__file__).parent.parent
+            index_path = project_root / "frontend" / "dist" / "index.html"
+            if not index_path.exists():
+                # Try development path
+                index_path = project_root / "frontend" / "index.html"
+
+            if index_path.exists():
+                with open(index_path, "r", encoding="utf-8") as f:
+                    return f.read()
+            else:
+                raise HTTPException(status_code=404, detail="Frontend not built. Please run npm run build in frontend directory.")
+
     def _project_to_dict(self, project: ProjectRecord) -> dict:
         """转换为字典"""
         return {
