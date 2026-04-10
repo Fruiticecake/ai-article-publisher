@@ -54,6 +54,7 @@ class MonitoringConfig:
     enabled: bool = bool(os.getenv("MONITORING_ENABLED", "true").lower() == "true")
     metrics_port: int = int(os.getenv("METRICS_PORT", "8000"))
     dashboard_port: int = int(os.getenv("DASHBOARD_PORT", "8081"))
+    dashboard_host: str = os.getenv("DASHBOARD_HOST", "127.0.0.1")
 
 
 @dataclass
@@ -73,9 +74,41 @@ class TemplateConfig:
 @dataclass
 class AuthConfig:
     """认证配置"""
-    secret_key: str = os.getenv("JWT_SECRET_KEY", "auto-publisher-secret-key-change-in-production")
+    secret_key: str = os.getenv("JWT_SECRET_KEY")
     algorithm: str = "HS256"
     token_expires_days: int = int(os.getenv("JWT_TOKEN_EXPIRES_DAYS", "7"))
+
+    def __post_init__(self):
+        if self.secret_key is None or self.secret_key == "":
+            raise ValueError(
+                "JWT_SECRET_KEY environment variable is required. "
+                "Please generate a secure random key and set it in .env.\n"
+                "You can generate a key with: python -c 'import secrets; print(secrets.token_hex(32))'"
+            )
+        if self.secret_key == "auto-publisher-secret-key-change-in-production":
+            raise ValueError(
+                "You are using the default insecure JWT_SECRET_KEY. "
+                "Please generate a secure random key and update it in .env.\n"
+                "Generate with: python -c 'import secrets; print(secrets.token_hex(32))'"
+            )
+
+
+@dataclass
+class CORSConfig:
+    """CORS 配置"""
+    allowed_origins: str = os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:8080")
+
+    def get_origins(self) -> list[str]:
+        """解析允许的起源列表"""
+        if not self.allowed_origins or self.allowed_origins == "*":
+            # Warn about insecure wildcard
+            import warnings
+            warnings.warn(
+                "CORS_ALLOWED_ORIGINS set to wildcard '*', this is insecure for production. "
+                "Please specify exact origins in production."
+            )
+            return ["*"]
+        return [origin.strip() for origin in self.allowed_origins.split(",") if origin.strip()]
 
 
 @dataclass
@@ -89,6 +122,7 @@ class Settings:
     schedule: ScheduleConfig = field(default_factory=ScheduleConfig)
     template: TemplateConfig = field(default_factory=TemplateConfig)
     auth: AuthConfig = field(default_factory=AuthConfig)
+    cors: CORSConfig = field(default_factory=CORSConfig)
 
     reports_dir: Path = Path(os.getenv("REPORTS_DIR", "reports"))
     state_file: Path = Path(os.getenv("STATE_FILE", "state/selection_state.json"))

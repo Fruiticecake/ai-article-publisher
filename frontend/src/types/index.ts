@@ -1,3 +1,17 @@
+// Auth types
+export interface User {
+  id: number;
+  username: string;
+  email?: string;
+  is_admin: boolean;
+}
+
+export interface AuthResponse {
+  success: boolean;
+  token: string;
+  user: User;
+}
+
 export interface Project {
   id: number;
   source: string;
@@ -27,9 +41,13 @@ export interface Report {
   quality_score: number;
 }
 
-export interface Stats {
+export interface StatsResponse {
   total_projects: number;
   total_reports: number;
+}
+
+export interface ProjectStats {
+  [key: string]: number;
 }
 
 // 发布平台相关类型

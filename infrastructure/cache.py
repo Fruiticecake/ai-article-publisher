@@ -47,7 +47,8 @@ def cache_result(ttl: int = 3600, key_prefix: str = "") -> Callable:
         async def wrapper(*args, **kwargs) -> T:
             # 生成缓存键
             cache_key = key_prefix + hashlib.md5(
-                json.dumps({"args": args, "kwargs": kwargs}, sort_keys=True).encode()
+                json.dumps({"args": args, "kwargs": kwargs}, sort_keys=True).encode(),
+                usedforsecurity=False
             ).hexdigest()
 
             # 尝试从缓存获取

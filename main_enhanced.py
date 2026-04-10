@@ -2,6 +2,7 @@
 import argparse
 import asyncio
 import logging
+import secrets
 from pathlib import Path
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -45,18 +46,25 @@ async def initialize_database() -> DatabaseManager:
     await db_manager.init_db()
     logger.info("数据库初始化完成")
 
-    # 创建默认管理员用户
+    # 创建默认管理员用户 - 生成随机密码如果不存在
     auth_service = AuthService(db_manager)
     try:
+        # Generate random password for default admin
+        default_password = secrets.token_hex(8)
         await auth_service.register(
             username="admin",
-            password="admin123",
+            password=default_password,
             email="admin@example.com"
         )
-        logger.info("默认管理员用户已创建 (用户名: admin, 密码: admin123)")
+        logger.info("=" * 60)
+        logger.info("默认管理员用户已创建")
+        logger.info(f"用户名: admin")
+        logger.info(f"密码: {default_password}")
+        logger.info("请保存此密码并考虑在登录后更改它")
+        logger.info("=" * 60)
     except ValueError as e:
-        if "已存在" not in str(e):
-            logger.info(f"管理员用户: {e}")
+        if "already exists" not in str(e) and "已存在" not in str(e):
+            logger.warning(f"创建管理员用户失败: {e}")
 
     return db_manager
 
@@ -166,8 +174,9 @@ async def run_scheduled() -> None:
             daemon=True,
         )
         dashboard_thread.start()
-        logger.info(f"Dashboard 已启动: http://0.0.0.0:{SETTINGS.monitoring.dashboard_port}")
-        logger.info(f"API 文档: http://0.0.0.0:{SETTINGS.monitoring.dashboard_port}/docs")
+        display_host = "localhost" if SETTINGS.monitoring.dashboard_host == "127.0.0.1" else SETTINGS.monitoring.dashboard_host
+        logger.info(f"Dashboard 已启动: http://{display_host}:{SETTINGS.monitoring.dashboard_port}")
+        logger.info(f"API 文档: http://{display_host}:{SETTINGS.monitoring.dashboard_port}/docs")
 
     try:
         # 保持运行

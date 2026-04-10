@@ -27,7 +27,7 @@ class TemplateEngine:
 
         self.env = jinja2.Environment(
             loader=jinja2.FileSystemLoader(str(self.template_dir)),
-            autoescape=False,
+            autoescape=jinja2.select_autoescape(['html', 'htm', 'xml']),
         )
 
         # 添加自定义过滤器

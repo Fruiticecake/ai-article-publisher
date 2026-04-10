@@ -1,4 +1,5 @@
 """数据库连接管理"""
+import logging
 from contextlib import asynccontextmanager
 from datetime import datetime
 from typing import AsyncGenerator
@@ -6,6 +7,8 @@ from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import String, Integer, Float, DateTime, JSON, Boolean
+
+logger = logging.getLogger(__name__)
 
 
 class Base(DeclarativeBase):
@@ -22,9 +25,9 @@ class ProjectRecord(Base):
     full_name: Mapped[str] = mapped_column(String(500), index=True)
     html_url: Mapped[str] = mapped_column(String(1000))
     description: Mapped[str] = mapped_column(String(2000))
-    stars: Mapped[int] = mapped_column(Integer)
-    forks: Mapped[int] = mapped_column(Integer)
-    language: Mapped[str] = mapped_column(String(100))
+    stars: Mapped[int] = mapped_column(Integer, index=True)
+    forks: Mapped[int] = mapped_column(Integer, index=True)
+    language: Mapped[str] = mapped_column(String(100), index=True)
     topics: Mapped[dict] = mapped_column(JSON)
     readme: Mapped[str] = mapped_column(String, nullable=True)
     repo_metadata: Mapped[dict] = mapped_column("metadata", JSON, nullable=True)
@@ -87,6 +90,7 @@ class DatabaseManager:
             try:
                 yield session
                 await session.commit()
-            except Exception:
+            except Exception as e:
+                logger.debug("Database transaction rolled back due to exception: %s", e)
                 await session.rollback()
                 raise
