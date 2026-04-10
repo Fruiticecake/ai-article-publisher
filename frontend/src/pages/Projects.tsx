@@ -14,7 +14,7 @@ export default function Projects() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between" data-testid="projects-header">
         <div>
           <h1 className="text-2xl font-bold text-slate-800">项目列表</h1>
           <p className="text-slate-500 mt-1">所有已分析的 GitHub 项目</p>
@@ -26,22 +26,24 @@ export default function Projects() {
               type="text"
               placeholder="搜索项目..."
               className="h-10 pl-10 pr-4 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 w-64"
+              data-testid="search-input"
             />
           </div>
-          <button className="flex items-center gap-2 h-10 px-4 rounded-xl border border-slate-200 bg-white text-sm text-slate-600 hover:bg-slate-50 transition-colors">
+          <button className="flex items-center gap-2 h-10 px-4 rounded-xl border border-slate-200 bg-white text-sm text-slate-600 hover:bg-slate-50 transition-colors" data-testid="filter-button">
             <Filter size={16} />
             筛选
           </button>
         </div>
       </div>
 
-      <Card>
+      <Card data-testid="projects-card">
         <CardContent className="p-6">
-          <div className="space-y-3">
+          <div className="space-y-3" data-testid="projects-list">
             {projects?.map((project, index) => (
               <div
                 key={project.id}
                 className="group flex items-start justify-between rounded-xl border border-slate-200/60 bg-slate-50/50 p-5 hover:bg-white hover:shadow-lg hover:border-blue-200/60 transition-all duration-300"
+                data-testid={`project-item-${index}`}
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
@@ -50,6 +52,7 @@ export default function Projects() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="font-semibold text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                      data-testid={`project-name-${index}`}
                     >
                       {project.full_name}
                     </a>

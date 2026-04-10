@@ -38,8 +38,8 @@ export default function Dashboard() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="animate-fadeIn" style={{ animationDelay: '100ms' }}>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4" data-testid="stats-cards">
+        <Card className="animate-fadeIn" style={{ animationDelay: '100ms' }} data-testid="total-projects-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-slate-500">总项目数</CardTitle>
             <div className="p-2 rounded-lg bg-blue-50">
@@ -47,12 +47,12 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-slate-800">{stats?.total_projects || 0}</div>
+            <div className="text-3xl font-bold text-slate-800" data-testid="total-projects">{stats?.total_projects || 0}</div>
             <p className="text-xs text-slate-400 mt-1">已分析的项目</p>
           </CardContent>
         </Card>
 
-        <Card className="animate-fadeIn" style={{ animationDelay: '150ms' }}>
+        <Card className="animate-fadeIn" style={{ animationDelay: '150ms' }} data-testid="total-reports-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-slate-500">总报告数</CardTitle>
             <div className="p-2 rounded-lg bg-cyan-50">
@@ -60,12 +60,12 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-slate-800">{stats?.total_reports || 0}</div>
+            <div className="text-3xl font-bold text-slate-800" data-testid="total-reports">{stats?.total_reports || 0}</div>
             <p className="text-xs text-slate-400 mt-1">生成的报告</p>
           </CardContent>
         </Card>
 
-        <Card className="animate-fadeIn" style={{ animationDelay: '200ms' }}>
+        <Card className="animate-fadeIn" style={{ animationDelay: '200ms' }} data-testid="avg-stars-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-slate-500">平均 Stars</CardTitle>
             <div className="p-2 rounded-lg bg-amber-50">
@@ -73,12 +73,12 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-slate-800">{avgStars}</div>
+            <div className="text-3xl font-bold text-slate-800" data-testid="avg-stars">{avgStars}</div>
             <p className="text-xs text-slate-400 mt-1">Top 5 项目平均</p>
           </CardContent>
         </Card>
 
-        <Card className="animate-fadeIn" style={{ animationDelay: '250ms' }}>
+        <Card className="animate-fadeIn" style={{ animationDelay: '250ms' }} data-testid="system-status-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-slate-500">系统状态</CardTitle>
             <div className="p-2 rounded-lg bg-emerald-50">
@@ -88,7 +88,7 @@ export default function Dashboard() {
           <CardContent>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <div className="text-xl font-bold text-emerald-600">正常运行</div>
+              <div className="text-xl font-bold text-emerald-600" data-testid="system-status">正常运行</div>
             </div>
             <p className="text-xs text-slate-400 mt-1">所有服务正常</p>
           </CardContent>
@@ -96,7 +96,7 @@ export default function Dashboard() {
       </div>
 
       {/* Recent Projects */}
-      <Card className="animate-fadeIn" style={{ animationDelay: '300ms' }}>
+      <Card className="animate-fadeIn" style={{ animationDelay: '300ms' }} data-testid="recent-projects-card">
         <CardHeader className="pb-4">
           <div className="flex items-center gap-2">
             <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500">
@@ -106,12 +106,13 @@ export default function Dashboard() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
+          <div className="space-y-3" data-testid="projects-list">
             {projects?.map((project, index) => (
               <div
                 key={project.id}
                 className="group flex items-start justify-between rounded-xl border border-slate-200/60 bg-slate-50/50 p-4 hover:bg-white hover:shadow-lg hover:border-blue-200/60 transition-all duration-300"
                 style={{ animationDelay: `${350 + index * 50}ms` }}
+                data-testid={`project-item-${index}`}
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
@@ -120,6 +121,7 @@ export default function Dashboard() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="font-semibold text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                      data-testid={`project-name-${index}`}
                     >
                       {project.full_name}
                     </a>
@@ -149,7 +151,7 @@ export default function Dashboard() {
       </Card>
 
       {/* Recent Reports */}
-      <Card className="animate-fadeIn" style={{ animationDelay: '400ms' }}>
+      <Card className="animate-fadeIn" style={{ animationDelay: '400ms' }} data-testid="recent-reports-card">
         <CardHeader className="pb-4">
           <div className="flex items-center gap-2">
             <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500">
@@ -159,15 +161,16 @@ export default function Dashboard() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
+          <div className="space-y-3" data-testid="reports-list">
             {reports?.map((report, index) => (
               <div
                 key={report.id}
                 className="group flex items-start justify-between rounded-xl border border-slate-200/60 bg-slate-50/50 p-4 hover:bg-white hover:shadow-lg hover:border-violet-200/60 transition-all duration-300"
                 style={{ animationDelay: `${450 + index * 50}ms` }}
+                data-testid={`report-item-${index}`}
               >
                 <div className="flex-1">
-                  <h4 className="font-semibold text-slate-700 group-hover:text-violet-700 transition-colors">
+                  <h4 className="font-semibold text-slate-700 group-hover:text-violet-700 transition-colors" data-testid={`report-title-${index}`}>
                     {report.title}
                   </h4>
                   <div className="mt-3 flex items-center gap-4 text-xs text-slate-400">

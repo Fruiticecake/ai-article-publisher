@@ -147,13 +147,13 @@ export default function Publish() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6" data-testid="publish-grid">
         {/* 定时配置 */}
-        <Card className="p-4">
+        <Card className="p-4" data-testid="schedule-config-card">
           <h2 className="text-lg font-semibold mb-4">定时发布配置</h2>
 
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between" data-testid="enable-schedule">
               <span className="text-sm font-medium">启用定时任务</span>
               <button
                 onClick={() => setEnabled(!enabled)}
@@ -161,6 +161,7 @@ export default function Publish() {
                   relative inline-flex h-6 w-11 items-center rounded-full transition-colors
                   ${enabled ? 'bg-blue-600' : 'bg-gray-300'}
                 `}
+                data-testid="schedule-toggle"
               >
                 <span
                   className={`
@@ -177,6 +178,7 @@ export default function Publish() {
                 value={cron}
                 onChange={(e) => setCron(e.target.value)}
                 placeholder="0 9 * * *"
+                data-testid="cron-input"
               />
               <p className="text-xs text-gray-500 mt-1">
                 格式: 分 时 日 月 周 (默认每天 9:00 执行)
@@ -189,6 +191,7 @@ export default function Publish() {
                 value={timezone}
                 onChange={(e) => setTimezone(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                data-testid="timezone-select"
               >
                 <option value="Asia/Shanghai">Asia/Shanghai (北京时间)</option>
                 <option value="UTC">UTC</option>
@@ -201,6 +204,7 @@ export default function Publish() {
               onClick={handleSaveSchedule}
               disabled={saving}
               className="w-full"
+              data-testid="save-schedule-button"
             >
               {saving ? '保存中...' : '保存配置'}
             </Button>
@@ -208,7 +212,7 @@ export default function Publish() {
         </Card>
 
         {/* 手动触发 */}
-        <Card className="p-4">
+        <Card className="p-4" data-testid="manual-publish-card">
           <h2 className="text-lg font-semibold mb-4">手动发布</h2>
 
           <p className="text-sm text-gray-600 mb-4">
@@ -217,7 +221,7 @@ export default function Publish() {
 
           <div className="mb-4">
             <label className="block text-sm font-medium mb-2">选择发布平台</label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-2" data-testid="platforms-grid">
               {publishers.map((publisher) => {
                 const isSelected = selectedPlatforms.includes(publisher.type);
                 const isEnabled = publisher.enabled;
@@ -236,6 +240,7 @@ export default function Publish() {
                       }
                       ${!isEnabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                     `}
+                    data-testid={`platform-button-${publisher.type}`}
                   >
                     <span
                       className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs"
@@ -254,13 +259,14 @@ export default function Publish() {
             disabled={triggering || selectedPlatforms.length === 0}
             variant="default"
             className="w-full"
+            data-testid="trigger-publish-button"
           >
             {triggering ? '执行中...' : '立即发布'}
           </Button>
         </Card>
 
         {/* 选择项目导出 */}
-        <Card className="p-4">
+        <Card className="p-4" data-testid="document-export-card">
           <h2 className="text-lg font-semibold mb-4">文档导出</h2>
 
           <div className="mb-4">
@@ -272,6 +278,7 @@ export default function Publish() {
                 setSelectedProject(project || null);
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              data-testid="project-select"
             >
               <option value="">请选择项目</option>
               {projects.map((project) => (
@@ -288,7 +295,7 @@ export default function Publish() {
         </Card>
 
         {/* 报告发布 */}
-        <Card className="p-4">
+        <Card className="p-4" data-testid="report-publish-card">
           <h2 className="text-lg font-semibold mb-4">报告发布</h2>
 
           <p className="text-sm text-gray-600 mb-4">
@@ -305,10 +312,10 @@ export default function Publish() {
       </div>
 
       {/* 平台状态 */}
-      <Card className="p-4 mt-6">
+      <Card className="p-4 mt-6" data-testid="platforms-status-card">
         <h2 className="text-lg font-semibold mb-4">平台配置状态</h2>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4" data-testid="platforms-status">
           {publishers.map((publisher) => (
             <div
               key={publisher.type}
@@ -319,6 +326,7 @@ export default function Publish() {
                   : 'border-gray-200 bg-gray-50'
                 }
               `}
+              data-testid={`platform-status-${publisher.type}`}
             >
               <div
                 className="w-10 h-10 mx-auto mb-2 rounded-full flex items-center justify-center text-white font-bold"

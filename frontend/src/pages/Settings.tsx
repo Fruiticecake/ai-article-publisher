@@ -96,7 +96,7 @@ export default function Settings() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between" data-testid="settings-header">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">系统设置</h1>
           <p className="text-gray-600">配置 API Keys、Tokens 和各项参数</p>
@@ -106,6 +106,7 @@ export default function Settings() {
           disabled={saving}
           variant="primary"
           className="flex items-center gap-2"
+          data-testid="save-all-button"
         >
           <Save className="w-4 h-4" />
           {saving ? '保存中...' : '保存所有配置'}
@@ -113,7 +114,7 @@ export default function Settings() {
       </div>
 
       {/* GitHub 配置 */}
-      <Card>
+      <Card data-testid="github-config-card">
         <CardHeader>
           <CardTitle>GitHub 配置</CardTitle>
         </CardHeader>
@@ -127,6 +128,7 @@ export default function Settings() {
                 onChange={(e) => setGithubConfig({ ...githubConfig, token: e.target.value })}
                 placeholder="ghp_..."
                 className="pr-12"
+                data-testid="github-token-input"
               />
               <button
                 type="button"

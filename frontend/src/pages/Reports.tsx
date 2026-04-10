@@ -13,21 +13,22 @@ export default function Reports() {
 
   return (
     <div className="space-y-6">
-      <div>
+      <div data-testid="reports-header">
         <h1 className="text-2xl font-bold text-gray-900">报告列表</h1>
         <p className="text-gray-600">所有生成的分析报告</p>
       </div>
 
-      <Card>
+      <Card data-testid="reports-card">
         <CardContent className="p-6">
-          <div className="space-y-4">
-            {reports?.map((report) => (
+          <div className="space-y-4" data-testid="reports-list">
+            {reports?.map((report, index) => (
               <div
                 key={report.id}
                 className="flex items-start justify-between rounded-lg border bg-white p-4 hover:shadow-md transition-shadow"
+                data-testid={`report-item-${index}`}
               >
                 <div className="flex-1">
-                  <h4 className="font-medium text-gray-900">{report.title}</h4>
+                  <h4 className="font-medium text-gray-900" data-testid={`report-title-${index}`}>{report.title}</h4>
                   <div className="mt-2 flex items-center gap-4 text-xs text-gray-500">
                     <span>生成时间: {formatDate(report.generated_at)}</span>
                     <Badge variant="success">

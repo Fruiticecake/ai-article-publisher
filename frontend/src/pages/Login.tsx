@@ -55,7 +55,7 @@ export default function Login() {
         </CardHeader>
 
         <CardContent className="pb-8">
-          <form onSubmit={handleLogin} className="space-y-5">
+          <form onSubmit={handleLogin} className="space-y-5" data-testid="login-form">
             <div className="space-y-2">
               <label htmlFor="username" className="block text-sm font-medium text-slate-700">
                 用户名
@@ -70,6 +70,7 @@ export default function Login() {
                   onChange={(e) => setUsername(e.target.value)}
                   className="pl-10"
                   required
+                  data-testid="username-input"
                 />
               </div>
             </div>
@@ -88,6 +89,7 @@ export default function Login() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10"
                   required
+                  data-testid="password-input"
                 />
               </div>
             </div>
@@ -96,6 +98,7 @@ export default function Login() {
               type="submit"
               className="w-full h-11 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 shadow-lg shadow-blue-500/25"
               disabled={loading}
+              data-testid="login-button"
             >
               {loading ? '登录中...' : '登录'}
             </Button>

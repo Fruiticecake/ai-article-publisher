@@ -109,27 +109,47 @@ class EnhancedDashboardAPI:
             allow_headers=["*"],
         )
 
-        # 挂载静态文件 (在路由设置之前挂载)
-        # 使用绝对路径避免路径问题
-        base_path = Path(r"D:\products\auto-publisher")
-        frontend_path = base_path / "frontend" / "dist"
-        
         # 配置 MIME 类型，修复 JavaScript 文件被识别为 JSON 的问题
         import mimetypes
         mimetypes.add_type('application/javascript', '.js')
-        
-        if frontend_path.exists():
-            print(f"Mounting frontend from: {frontend_path}")
-            app.mount("/dashboard", StaticFiles(directory=str(frontend_path), html=True), name="dashboard")
-        else:
-            # 如果前端未构建，挂载源目录（仅用于开发）
-            dev_path = base_path / "frontend"
-            if dev_path.exists():
-                print(f"Mounting frontend from dev: {dev_path}")
-                app.mount("/dashboard", StaticFiles(directory=str(dev_path), html=True), name="dashboard")
 
-        # 设置路由
+        # 设置 API 路由优先 - all /api/* routes are handled first
         self._setup_routes(app)
+
+        # SPA frontend routing - handle all non-API requests
+        # For static files (JS/CSS/assets with extensions), serve them directly if they exist
+        # For any other path (frontend routes like /login, /publish), serve index.html
+        # so React Router can handle client-side routing correctly
+        base_path = Path(r"D:\products\auto-publisher")
+        frontend_dist = base_path / "frontend" / "dist"
+
+        @app.get("/{full_path:path}", response_class=HTMLResponse)
+        async def serve_spa(full_path: str):
+            """Serve SPA: static files or index.html for client-side routing"""
+
+            # If it's a request for a static file (has file extension)
+            # Try to serve it directly from dist directory
+            if '.' in full_path and not full_path.endswith('.html'):
+                static_path = frontend_dist / full_path
+                if static_path.exists() and static_path.is_file():
+                    # Guess content type based on extension
+                    content_type, _ = mimetypes.guess_type(str(static_path))
+                    content_type = content_type or 'application/octet-stream'
+                    with open(static_path, "rb") as f:
+                        return Response(content=f.read(), media_type=content_type)
+
+            # For root path or any frontend route (no extension)
+            # Serve index.html to let React Router handle client-side routing
+            index_path = frontend_dist / "index.html"
+            if not index_path.exists():
+                # Try development path
+                index_path = base_path / "frontend" / "index.html"
+
+            if index_path.exists():
+                with open(index_path, "r", encoding="utf-8") as f:
+                    return HTMLResponse(content=f.read())
+            else:
+                raise HTTPException(status_code=404, detail="Frontend not built. Please run npm run build in frontend directory.")
 
         return app
 
@@ -937,25 +957,6 @@ class EnhancedDashboardAPI:
                 "version": self.config.version,
                 "timestamp": datetime.utcnow().isoformat(),
             }
-
-        # Catch-all for SPA frontend routing
-        # All requests to /dashboard/* return index.html so React Router handles it
-        @app.get("/dashboard/{full_path:path}", response_class=HTMLResponse)
-        async def serve_spa(full_path: str):
-            """Serve SPA index.html for any frontend route"""
-            # __file__ is application/dashboard_enhanced.py
-            # parent.parent gives project root
-            project_root = Path(__file__).parent.parent
-            index_path = project_root / "frontend" / "dist" / "index.html"
-            if not index_path.exists():
-                # Try development path
-                index_path = project_root / "frontend" / "index.html"
-
-            if index_path.exists():
-                with open(index_path, "r", encoding="utf-8") as f:
-                    return f.read()
-            else:
-                raise HTTPException(status_code=404, detail="Frontend not built. Please run npm run build in frontend directory.")
 
     def _project_to_dict(self, project: ProjectRecord) -> dict:
         """转换为字典"""

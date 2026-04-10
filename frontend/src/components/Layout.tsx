@@ -44,7 +44,7 @@ export default function Layout() {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 space-y-1.5 px-4 py-6">
+          <nav className="flex-1 space-y-1.5 px-4 py-6" data-testid="sidebar-nav">
             {navItems.map((item, index) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
@@ -58,6 +58,7 @@ export default function Layout() {
                       : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
                   }`}
                   style={{ animationDelay: `${index * 50}ms` }}
+                  data-testid={`nav-${item.label}`}
                 >
                   <Icon size={18} className={isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-600'} />
                   {item.label}
@@ -88,6 +89,7 @@ export default function Layout() {
                   window.location.href = '/login';
                 }}
                 title="退出登录"
+                data-testid="logout-button"
               >
                 <LogOut size={16} />
               </button>

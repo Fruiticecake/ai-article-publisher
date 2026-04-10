@@ -4,7 +4,7 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
-  base: '/dashboard/',  // 前端部署在 /dashboard 路径下
+  base: '/',  // 前端部署在根路径 /
   publicDir: 'dist',
   assetsDir: 'assets',
   resolve: {
