@@ -1,73 +1,75 @@
 # Auto Publisher
 
-自动化 GitHub 项目分析报告生成与多平台发布工具。
+[English](README.md) | [简体中文](README.zh-CN.md)
 
-## 功能特性
+Automated GitHub project analysis, report generation, and multi-platform publishing tool.
 
-- 🔍 **自动抓取** - 从 GitHub 获取热门趋势项目数据
-- 🤖 **AI 分析** - 使用 LLM (Claude) 对项目进行深度分析和质量评分
-- 📊 **可视化仪表盘** - 完整的 Web 管理界面，支持项目浏览、报告生成、配置管理
-- 📝 **多平台发布** - 一键发布到 CSDN、知乎、掘金、Notion、Telegram、小红书
-- ⏰ **定时任务** - 支持 Cron 定时自动抓取和发布
-- 📄 **文档导出** - 支持 PDF 和 Markdown 格式导出
-- 🔐 **安全** - 完整的 JWT 认证，凭据脱敏显示，安全最佳实践
+## Features
 
-## 技术栈
+- 🔍 **Auto Fetching** - Get trending project data from GitHub automatically
+- 🤖 **AI Analysis** - Deep project analysis and quality scoring using LLM (Claude)
+- 📊 **Visual Dashboard** - Complete web management interface with project browsing, report generation, and configuration management
+- 📝 **Multi-platform Publishing** - One-click publishing to CSDN, Zhihu, Juejin, Notion, Telegram, Xiaohongshu
+- ⏰ **Scheduled Tasks** - Cron-based automatic fetching and publishing
+- 📄 **Document Export** - Support PDF and Markdown export formats
+- 🔐 **Security** - Complete JWT authentication, credential masking, security best practices
 
-**后端:**
+## Tech Stack
+
+**Backend:**
 - Python 3.10+
 - FastAPI
 - SQLAlchemy (Async)
 - APScheduler
 - Jinja2
 
-**前端:**
+**Frontend:**
 - React 18 + TypeScript
 - Vite
 - Tailwind CSS
 - React Router
 - Axios
 
-## 快速开始
+## Quick Start
 
-### 1. 克隆项目
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/Fruiticecake/auto-publisher.git
 cd auto-publisher
 ```
 
-### 2. 安装后端依赖
+### 2. Install backend dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. 安装前端依赖
+### 3. Install frontend dependencies
 
 ```bash
 cd frontend
 npm install
 ```
 
-### 4. 配置环境变量
+### 4. Configure environment variables
 
-创建 `.env` 文件：
+Create `.env` file:
 
 ```env
-# JWT 密钥 (必须)
-# 生成方式: python -c 'import secrets; print(secrets.token_hex(32))'
+# JWT Secret (required)
+# Generate with: python -c 'import secrets; print(secrets.token_hex(32))'
 JWT_SECRET_KEY=your-generated-secret-key
 
-# GitHub Token (可选，提高 API 速率限制)
+# GitHub Token (optional, increases API rate limit)
 GITHUB_TOKEN=your_github_token
 
-# LLM 配置
+# LLM Configuration
 LLM_API_KEY=your_anthropic_api_key
 LLM_MODEL=claude-3-5-sonnet-20241022
 LLM_ENABLED=true
 
-# 发布平台配置
+# Publishing Platforms
 NOTION_TOKEN=your_notion_token
 NOTION_DATABASE_ID=your_notion_database_id
 CSDN_PUBLISH_API=your_csdn_api
@@ -78,11 +80,11 @@ TELEGRAM_BOT_TOKEN=your_telegram_bot_token
 TELEGRAM_CHAT_ID=your_chat_id
 XHS_COOKIE=your_xhs_cookie
 
-# CORS 配置
+# CORS Configuration
 CORS_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:8080
 ```
 
-### 5. 构建前端
+### 5. Build frontend
 
 ```bash
 cd frontend
@@ -90,73 +92,73 @@ npm run build
 cd ..
 ```
 
-### 6. 运行
+### 6. Run
 
 ```bash
 python main_enhanced.py
 ```
 
-首次运行会自动创建数据库并生成随机管理员密码，请保存好密码。
+On first run, the database will be created automatically and a random admin password will be generated. **Make sure to save this password.**
 
-## 仪表盘
+## Dashboard
 
-启动后访问 `http://localhost:8080` 进入仪表盘：
+After starting, visit `http://localhost:8080` to access the dashboard:
 
-- 项目列表 - 浏览已抓取的 GitHub 项目
-- 报告生成 - 使用 AI 生成分析报告
-- 发布管理 - 手动发布到选中平台
-- 定时任务 - 配置自动发布计划
-- 设置 - 配置各个平台的凭据
+- Project List - Browse fetched GitHub projects
+- Report Generation - Generate AI analysis reports
+- Publish Management - Manually publish to selected platforms
+- Scheduled Tasks - Configure automatic publishing schedule
+- Settings - Configure credentials for all platforms
 
-## 项目结构
+## Project Structure
 
 ```
 auto-publisher/
-├── application/           # 应用层
-│   ├── routes/            # 模块化 API 路由
-│   ├── utils.py           # 共享工具函数
-│   ├── auth.py           # 认证服务
-│   ├── dashboard_enhanced.py  # FastAPI 仪表盘
+├── application/           # Application layer
+│   ├── routes/            # Modular API routes
+│   ├── utils.py           # Shared utilities
+│   ├── auth.py            # Authentication service
+│   ├── dashboard_enhanced.py  # FastAPI dashboard
 │   └── ...
-├── core/                 # 核心模型
-├── infrastructure/       # 基础设施 (数据库、缓存)
-├── adapters/             # 外部适配器 (GitHub、发布平台)
-├── frontend/             # React 前端
-├── templates/            # Jinja2 报告模板
-├── tests/                # 单元测试
-└── main_enhanced.py       # 入口文件
+├── core/                 # Core models
+├── infrastructure/       # Infrastructure (database, cache)
+├── adapters/             # External adapters (GitHub, publishers)
+├── frontend/             # React frontend
+├── templates/            # Jinja2 report templates
+├── tests/                # Unit tests
+└── main_enhanced.py       # Entry point
 ```
 
-## 安全特性
+## Security Features
 
-- ✅ 没有硬编码凭据，所有配置来自环境变量
-- ✅ `.env` 正确添加到 `.gitignore`，不会被提交
-- ✅ CORS 可配置，不默认允许所有来源
-- ✅ API 返回凭据时自动脱敏
-- ✅ Jinja2 自动转义启用，防止 XSS
-- ✅ 静态文件路径遍历防护
-- ✅ 默认绑定 `127.0.0.1`，提高开发环境安全性
-- ✅ 首次运行自动生成随机管理员密码
+- ✅ No hardcoded credentials, all configuration from environment variables
+- ✅ `.env` properly added to `.gitignore`, won't be committed
+- ✅ Configurable CORS, doesn't allow all origins by default
+- ✅ Automatic credential masking in API responses
+- ✅ Jinja2 auto-escaping enabled, prevents XSS
+- ✅ Path traversal protection for static files
+- ✅ Default binding to `127.0.0.1` for better development security
+- ✅ Random admin password generated automatically on first run
 
-## 开发
+## Development
 
-### 运行测试
+### Run tests
 
 ```bash
 python -m pytest tests/ -v
 ```
 
-### 前端开发模式
+### Frontend development mode
 
 ```bash
 cd frontend
 npm run dev
 ```
 
-## 许可证
+## License
 
-MIT License - 详见 [LICENSE](LICENSE) 文件。
+MIT License - see [LICENSE](LICENSE) for details.
 
-## 贡献
+## Contributing
 
-欢迎提交 Issue 和 Pull Request!
+Issues and Pull Requests are welcome!
