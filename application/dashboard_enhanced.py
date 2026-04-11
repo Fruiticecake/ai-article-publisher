@@ -1,5 +1,4 @@
 """增强版 Web Dashboard - FastAPI"""
-import io
 import json
 import logging
 from pathlib import Path
@@ -7,7 +6,7 @@ from typing import Any
 from datetime import datetime
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import select, desc
@@ -131,7 +130,11 @@ class EnhancedDashboardAPI:
 
         @app.get("/{full_path:path}", response_class=HTMLResponse)
         async def serve_spa(full_path: str):
-            """Serve SPA: static files or index.html for client-side routing"""
+            """Serve SPA: static files or index.html for client-side routing - EXCLUDE /api/ paths"""
+
+            # EXCLUDE API paths - let them 404 if not found by API routers
+            if full_path.startswith('api/') or full_path.startswith('/api/'):
+                raise HTTPException(status_code=404, detail="API endpoint not found")
 
             # If it's a request for a static file (has file extension)
             # Try to serve it directly from dist directory
@@ -145,7 +148,7 @@ class EnhancedDashboardAPI:
                     content_type, _ = mimetypes.guess_type(str(static_path))
                     content_type = content_type or 'application/octet-stream'
                     with open(static_path, "rb") as f:
-                        return io.Response(content=f.read(), media_type=content_type)
+                        return Response(content=f.read(), media_type=content_type)
 
             # For root path or any frontend route (no extension)
             # Serve index.html to let React Router handle client-side routing
@@ -173,25 +176,12 @@ class EnhancedDashboardAPI:
         app.include_router(schedule_router)
         app.include_router(document_router)
 
-        # Root route - redirect to frontend
-        @app.get("/", response_class=HTMLResponse)
-        async def root():
-            """Root page (redirect to frontend)"""
-            return """
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>Auto Publisher</title>
-                <meta http-equiv="refresh" content="0;url=/dashboard/">
-            </head>
-            <body>
-                <p>正在跳转到 Dashboard...</p>
-            </body>
-            </html>
-            """
+        # Root route - serve the SPA directly at root
+        # No redirect needed - let the catch-all route handle it
 
         # Health check
         @app.get("/health", tags=["系统"])
+        @app.get("/api/health", tags=["系统"])
         async def health_check() -> dict:
             """Health check"""
             return {
