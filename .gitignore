@@ -58,3 +58,11 @@ yarn-error.log*
 # Build
 frontend/dist/
 frontend/.parcel-cache/
+
+# E2E testing and debug
+.playwright-mcp/
+frontend/temp/
+frontend/screenshots/debug-*.png
+frontend/screenshots/diagnosis-*.png
+*-report.md
+page-snapshot.md
