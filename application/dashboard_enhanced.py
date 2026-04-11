@@ -6,7 +6,8 @@ from pathlib import Path
 from typing import Any
 from datetime import datetime
 
-from fastapi import FastAPI, HTTPException, HTMLResponse
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import select, desc
