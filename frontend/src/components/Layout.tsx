@@ -36,7 +36,7 @@ export default function Layout() {
               </div>
               <div>
                 <h1 className="text-lg font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                  Auto Publisher
+                  GitThink Pulse
                 </h1>
                 <p className="text-xs text-slate-500">GitHub 项目分析与发布</p>
               </div>

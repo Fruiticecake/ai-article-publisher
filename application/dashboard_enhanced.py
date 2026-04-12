@@ -44,7 +44,7 @@ class DashboardConfig:
 
     def __init__(
         self,
-        title: str = "Auto Publisher Dashboard",
+        title: str = "GitThink Pulse Dashboard",
         description: str = "GitHub 项目分析与发布平台",
         version: str = "2.0.0",
     ):

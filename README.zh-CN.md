@@ -1,4 +1,4 @@
-# Auto Publisher
+# GitThink Pulse
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
@@ -35,8 +35,8 @@
 ### 1. 克隆项目
 
 ```bash
-git clone https://github.com/Fruiticecake/auto-publisher.git
-cd auto-publisher
+git clone https://github.com/Fruiticecake/githink-pulse.git
+cd githink-pulse
 ```
 
 ### 2. 安装后端依赖
@@ -113,7 +113,7 @@ python main_enhanced.py
 ## 项目结构
 
 ```
-auto-publisher/
+githink-pulse/
 ├── application/           # 应用层
 │   ├── routes/            # 模块化 API 路由
 │   ├── utils.py           # 共享工具函数

@@ -104,7 +104,7 @@ export default function Settings() {
         <Button
           onClick={saveAllConfig}
           disabled={saving}
-          variant="primary"
+          variant="default"
           className="flex items-center gap-2"
           data-testid="save-all-button"
         >
@@ -435,7 +435,7 @@ export default function Settings() {
         <Button
           onClick={saveAllConfig}
           disabled={saving}
-          variant="primary"
+          variant="default"
           className="flex items-center gap-2 w-48"
         >
           <RefreshCw className={`w-4 h-4 ${saving ? 'animate-spin' : ''}`} />

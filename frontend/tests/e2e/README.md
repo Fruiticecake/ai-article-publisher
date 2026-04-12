@@ -1,6 +1,6 @@
-# E2E Tests for Auto Publisher
+# E2E Tests for GitThink Pulse
 
-This directory contains end-to-end (E2E) tests for the Auto Publisher application using Playwright.
+This directory contains end-to-end (E2E) tests for the GitThink Pulse application using Playwright.
 
 ## Setup
 

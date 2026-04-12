@@ -84,7 +84,7 @@ class RedditAdapter:
     async def get_hot_posts(self, subreddit: str = "programming", limit: int = 25) -> list[dict]:
         """获取热门帖子"""
         url = f"{self.base_url}/r/{subreddit}/hot.json"
-        headers = {"User-Agent": "auto-publisher-bot/1.0"}
+        headers = {"User-Agent": "githink-pulse-bot/1.0"}
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=headers, timeout=aiohttp.ClientTimeout(total) as resp:

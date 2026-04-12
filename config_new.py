@@ -85,7 +85,7 @@ class AuthConfig:
                 "Please generate a secure random key and set it in .env.\n"
                 "You can generate a key with: python -c 'import secrets; print(secrets.token_hex(32))'"
             )
-        if self.secret_key == "auto-publisher-secret-key-change-in-production":
+        if self.secret_key == "githink-pulse-secret-key-change-in-production":
             raise ValueError(
                 "You are using the default insecure JWT_SECRET_KEY. "
                 "Please generate a secure random key and update it in .env.\n"

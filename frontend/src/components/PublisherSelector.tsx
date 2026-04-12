@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
-import { api, downloadBlob } from '../api/client';
+import { api } from '../api/client';
 import type { PublisherInfo, PublisherPlatform, PublishResponse } from '../types';
 
 interface PublisherSelectorProps {

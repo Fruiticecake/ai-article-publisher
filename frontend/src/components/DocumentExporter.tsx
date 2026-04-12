@@ -51,7 +51,7 @@ export function DocumentExporter({ project }: DocumentExporterProps) {
         <Button
           onClick={() => handleExport('pdf')}
           disabled={exporting !== null}
-          variant="secondary"
+          variant="outline"
           className="w-full justify-center"
         >
           {exporting === 'pdf' ? '导出中...' : '📄 导出 PDF'}
@@ -60,7 +60,7 @@ export function DocumentExporter({ project }: DocumentExporterProps) {
         <Button
           onClick={() => handleExport('markdown')}
           disabled={exporting !== null}
-          variant="secondary"
+          variant="outline"
           className="w-full justify-center"
         >
           {exporting === 'markdown' ? '导出中...' : '📝 导出 Markdown'}

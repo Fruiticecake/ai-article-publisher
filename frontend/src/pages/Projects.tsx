@@ -1,7 +1,7 @@
 'use client';
 
 import { useProjects } from '@/hooks/useProjects';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Loading } from '@/components/ui/Loading';
 import { formatNumber, formatDate } from '@/lib/utils';

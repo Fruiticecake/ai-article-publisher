@@ -1,4 +1,4 @@
-# Auto Publisher
+# GitThink Pulse
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
@@ -35,8 +35,8 @@ Automated GitHub project analysis, report generation, and multi-platform publish
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/Fruiticecake/auto-publisher.git
-cd auto-publisher
+git clone https://github.com/Fruiticecake/githink-pulse.git
+cd githink-pulse
 ```
 
 ### 2. Install backend dependencies
@@ -113,7 +113,7 @@ After starting, visit `http://localhost:8080` to access the dashboard:
 ## Project Structure
 
 ```
-auto-publisher/
+githink-pulse/
 ├── application/           # Application layer
 │   ├── routes/            # Modular API routes
 │   ├── utils.py           # Shared utilities

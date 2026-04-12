@@ -8,10 +8,9 @@ import { Badge } from '../components/ui/Badge';
 import { PublisherSelector } from '../components/PublisherSelector';
 import { DocumentExporter } from '../components/DocumentExporter';
 import { api } from '../api/client';
-import type { ScheduleConfig, PublisherPlatform, PublisherInfo, Project } from '../types';
+import type { PublisherPlatform, PublisherInfo, Project } from '../types';
 
 export default function Publish() {
-  const [scheduleConfig, setScheduleConfig] = useState<ScheduleConfig | null>(null);
   const [publishers, setPublishers] = useState<PublisherInfo[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -44,7 +43,6 @@ export default function Publish() {
     const projectsData = await api.getProjects({ limit: 20 }).catch(() => []);
 
     if (scheduleData) {
-      setScheduleConfig(scheduleData);
       setCron(scheduleData.cron);
       setTimezone(scheduleData.timezone);
       setEnabled(scheduleData.enabled);
@@ -304,7 +302,7 @@ export default function Publish() {
 
           <PublisherSelector
             reportId={undefined}
-            onPublish={(result) => {
+            onPublish={() => {
               setSuccess('发布成功');
             }}
           />

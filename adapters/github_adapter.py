@@ -18,7 +18,7 @@ class GitHubAdapter:
         self.headers = {
             "Accept": "application/vnd.github+json",
             "X-GitHub-Api-Version": "2022-11-28",
-            "User-Agent": "auto-publisher-bot",
+            "User-Agent": "githink-pulse-bot",
         }
         if token:
             self.headers["Authorization"] = f"Bearer {token}"

@@ -1,7 +1,7 @@
 {
-  "name": "auto-publisher-frontend",
+  "name": "githink-pulse-frontend",
   "version": "1.0.0",
-  "description": "Auto Publisher 前端界面",
+  "description": "GitThink Pulse 前端界面",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.28.0",
-    "axios": "^1.6.7",
+    "axios": "^1.15.0",
     "clsx": "^2.1.0",
     "date-fns": "^3.3.1",
     "lucide-react": "^0.344.0",
@@ -44,5 +44,12 @@
     "tailwindcss": "^3.4.1",
     "typescript": "^5.4.2",
     "vite": "^5.2.0"
-  }
+  },
+  "main": "postcss.config.js",
+  "directories": {
+    "test": "tests"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

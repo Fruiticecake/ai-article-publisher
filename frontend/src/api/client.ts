@@ -38,7 +38,7 @@ apiClient.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
-      window.location.href = '/dashboard/login';
+      window.location.href = '/login';
     }
     return Promise.reject(error);
   },
@@ -110,21 +110,21 @@ export const api = {
   getPublisherConfig: (): Promise<PublisherConfig> =>
     apiClient.get('/config/publishers').then((res) => res.data),
 
-  updatePublisherConfig: (config: Record<string, string>): Promise<ConfigSaveResponse> =>
+  updatePublisherConfig: (config: Partial<PublisherConfig>): Promise<ConfigSaveResponse> =>
     apiClient.post('/config/publishers', null, { params: config }).then((res) => res.data),
 
   // Configuration - LLM
   getLlmConfig: (): Promise<LlmConfig> =>
     apiClient.get('/config/llm').then((res) => res.data),
 
-  updateLlmConfig: (config: { api_key?: string; model?: string; enabled?: boolean }): Promise<ConfigSaveResponse> =>
+  updateLlmConfig: (config: Partial<LlmConfig>): Promise<ConfigSaveResponse> =>
     apiClient.post('/config/llm', null, { params: config }).then((res) => res.data),
 
   // Configuration - GitHub
   getGithubConfig: (): Promise<GithubConfig> =>
     apiClient.get('/config/github').then((res) => res.data),
 
-  updateGithubConfig: (config: { token?: string; fetch_count?: number; days_window?: number }): Promise<ConfigSaveResponse> =>
+  updateGithubConfig: (config: Partial<GithubConfig>): Promise<ConfigSaveResponse> =>
     apiClient.post('/config/github', null, { params: config }).then((res) => res.data),
 
   // Health check
@@ -141,5 +141,5 @@ export const downloadBlob = (blob: Blob, filename: string) => {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-  window.URL.revokeObjectUrl(url);
+  window.URL.revokeObjectURL(url);
 };

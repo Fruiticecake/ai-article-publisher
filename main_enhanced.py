@@ -161,7 +161,7 @@ async def run_scheduled() -> None:
     # 启动 Dashboard
     if SETTINGS.monitoring.enabled:
         dashboard_config = DashboardConfig(
-            title="Auto Publisher Dashboard",
+            title="GitThink Pulse Dashboard",
             description="GitHub 项目分析与发布平台",
             version="2.0.0",
         )
@@ -200,7 +200,7 @@ async def run_dashboard() -> None:
     auto_publisher = AutoPublisherService(db_manager)
 
     dashboard_config = DashboardConfig(
-        title="Auto Publisher Dashboard",
+        title="GitThink Pulse Dashboard",
         description="GitHub 项目分析与发布平台",
         version="2.0.0",
     )
@@ -214,7 +214,7 @@ async def run_dashboard() -> None:
 
 def main() -> None:
     """主函数"""
-    parser = argparse.ArgumentParser(description="Auto Publisher - GitHub 项目分析与多平台发布")
+    parser = argparse.ArgumentParser(description="GitThink Pulse - GitHub 项目AI分析与多平台自动发布")
     parser.add_argument("--run-once", action="store_true", help="立即执行一次任务并退出")
     parser.add_argument("--dashboard", action="store_true", help="仅运行 Web Dashboard")
 

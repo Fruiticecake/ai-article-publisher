@@ -1,8 +1,8 @@
-# Auto Publisher v2.0 架构文档
+# GitThink Pulse v2.0 架构文档
 
 ## 概述
 
-Auto Publisher v2.0 是一个全面升级的 GitHub 项目分析与多平台发布系统，在 v1.0 的基础上增加了现代化的前端 UI、用户认证、任务队列等功能。
+GitThink Pulse v2.0 是一个全面升级的 GitHub 项目分析与多平台发布系统，在 v1.0 的基础上增加了现代化的前端 UI、用户认证、任务队列等功能。
 
 ## 架构图
 
